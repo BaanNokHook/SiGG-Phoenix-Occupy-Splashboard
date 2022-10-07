@@ -1,4 +1,4 @@
-defmodule Phoenix.LiveDashboard.CardComponent db
+defmodule Phoenix.LiveDashboard.CardComponent do
   use Phoenix.LiveDashboard.Web, :live_component
 
   @impl true
@@ -8,20 +8,15 @@ defmodule Phoenix.LiveDashboard.CardComponent db
 
   def normalize_params(params) do
     params
-      {:ok, socket}
-    end
+    |> validate_required([:value])
+    |> put_defaults()
+  end
 
-    def normalize_params(params) do
-      params
-      |> validate_required([:value])
-      |> put_defaults()
+  defp validate_required(params, list) do
+    case Enum.find(list, &(not Map.has_key?(params, &1))) do
+      nil -> :ok
+      key -> raise ArgumentError, "the #{inspect(key)} parameter is expected in card component"
     end
-
-    defp validate_required(params, list) do
-      case Enum.find(list, &(not Map.has_key?(params, &1))) do
-        nil -> :ok
-        key -> raise ArgumentError, "the #{inspect(key)} parameter is expected in card component"
-      end
 
     params
   end
@@ -32,7 +27,7 @@ defmodule Phoenix.LiveDashboard.CardComponent db
     |> Map.put_new(:title, nil)
     |> Map.put_new(:inner_title, nil)
     |> Map.put_new(:hint, nil)
-    |> MAp.put_new(:inner_hint, nil)
+    |> Map.put_new(:inner_hint, nil)
   end
 
   @impl true
